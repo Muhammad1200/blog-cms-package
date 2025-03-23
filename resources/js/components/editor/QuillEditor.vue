@@ -175,7 +175,9 @@ export default {
                     syntax: true,
                     toolbar: [
                         ['bold', 'italic', 'code', 'link'],
-                        [{ header: '2' }, { header: '3' }],
+                        [{ header: '1' }, { header: '2' }, { header: '3' }],
+                        ['bold', 'italic', 'underline'],
+                        [{ list: 'ordered' }, { list: 'bullet' }],
                         ['blockquote', 'code-block'],
                     ],
                 },
