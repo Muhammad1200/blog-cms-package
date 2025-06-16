@@ -206,4 +206,45 @@ class Post extends Model
             $post->topic()->detach();
         });
     }
+
+    private function replaceUrl($value){
+        // Only process if the value is a string and not null
+        if (is_string($value)) {
+            $appBaseUrl = url('/'); // Get the application's base URL dynamically (e.g., http://127.0.0.1:8000)
+
+            // Ensure the application base URL has a trailing slash for consistent comparison and removal.
+            if (substr($appBaseUrl, -1) !== '/') {
+                $appBaseUrl .= '/';
+            }
+
+            // If the provided value starts with our application's base URL, remove it.
+            if (Str::startsWith($value, $appBaseUrl)) {
+                $relativePath = str_replace($appBaseUrl, '', $value);
+                return $relativePath;
+            } else {
+                // If it's already a relative path, or an external URL not from our app,
+                // store it as is.
+                return $value;
+            }
+        } else {
+            // If the value is null or not a string, store it as is.
+            return $value;
+        }
+    }
+
+    public function setFeaturedImageAttribute($value)
+    {
+        if (is_string($value)) {
+            $this->attributes['featured_image'] = $this->replaceUrl($value);
+        } else {
+            $this->attributes['featured_image'] = $value;
+        }
+    }
+
+    public function getFeaturedImageAttribute($value){
+        if (empty($value)) return null;
+        if (Str::startsWith($value, ['http://', 'https://'])) return $value;
+        return asset($value);
+    }
+    
 }
