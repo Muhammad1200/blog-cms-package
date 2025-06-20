@@ -84,7 +84,7 @@
                                 :options="topics"
                                 :placeholder="trans.select_a_topic"
                                 :tag-placeholder="trans.add_a_new_topic"
-                                :multiple="true"
+                                :multiple="false"
                                 :taggable="true"
                                 :max="1"
                                 label="name"
