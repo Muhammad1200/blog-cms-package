@@ -134,20 +134,32 @@ class PostController extends Controller
             return (string) $tag->id;
         })->toArray();
 
-        $topicToSync = collect($request->input('topic', []))->map(function ($item) use ($topics) {
-            $topic = $topics->firstWhere('slug', $item['slug']);
+        $item = $request->input('topic');
+        $topic = $topics->firstWhere('slug', $item['slug']);
+        if (! $topic) {
+            $topic = Topic::create([
+                'id' => $id = Uuid::uuid4()->toString(),
+                'name' => $item['name'],
+                'slug' => $item['slug'],
+                'user_id' => request()->user('canvas')->id,
+            ]);
+        }
+        $topicToSync = [ (string) $topic->id ];
 
-            if (! $topic) {
-                $topic = Topic::create([
-                    'id' => $id = Uuid::uuid4()->toString(),
-                    'name' => $item['name'],
-                    'slug' => $item['slug'],
-                    'user_id' => request()->user('canvas')->id,
-                ]);
-            }
+        // $topicToSync = collect($request->input('topic', []))->map(function ($item) use ($topics) {
+        //     $topic = $topics->firstWhere('slug', $item['slug']);
 
-            return (string) $topic->id;
-        })->toArray();
+        //     if (! $topic) {
+        //         $topic = Topic::create([
+        //             'id' => $id = Uuid::uuid4()->toString(),
+        //             'name' => $item['name'],
+        //             'slug' => $item['slug'],
+        //             'user_id' => request()->user('canvas')->id,
+        //         ]);
+        //     }
+
+        //     return (string) $topic->id;
+        // })->toArray();
 
         $post->tags()->sync($tagsToSync);
 
